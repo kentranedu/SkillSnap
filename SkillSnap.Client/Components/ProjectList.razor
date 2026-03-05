@@ -54,21 +54,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            loadErrorMessage = null;
-            projects = await ProjectService.GetProjectsAsync();
+        await ReloadProjectsAsync();
 
-            if (UserSession.CurrentEditingProjectId.HasValue)
-            {
-                newProjectForm.Title = UserSession.CurrentEditingProjectTitle;
-                newProjectForm.Description = UserSession.CurrentEditingProjectDescription;
-            }
-        }
-        catch (HttpRequestException ex)
+        if (UserSession.CurrentEditingProjectId.HasValue)
         {
-            loadErrorMessage = ex.Message;
-            NotificationService.ShowError(loadErrorMessage);
+            newProjectForm.Title = UserSession.CurrentEditingProjectTitle;
+            newProjectForm.Description = UserSession.CurrentEditingProjectDescription;
         }
     }
 
@@ -95,7 +86,7 @@
             var createdProject = await ProjectService.AddProjectAsync(newProject);
             if (createdProject is not null)
             {
-                projects = await ProjectService.GetProjectsAsync();
+                await ReloadProjectsAsync();
                 newProjectForm = new ProjectFormModel();
                 UserSession.SetEditingProjectState(createdProject.Id, createdProject.Title, createdProject.Description);
                 NotificationService.ShowSuccess("Project added successfully.");
@@ -109,6 +100,21 @@
         finally
         {
             isSubmitting = false;
+        }
+    }
+
+    // Keep API load/error handling in one place for initial load and post-create refreshes.
+    private async Task ReloadProjectsAsync()
+    {
+        try
+        {
+            loadErrorMessage = null;
+            projects = await ProjectService.GetProjectsAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            loadErrorMessage = ex.Message;
+            NotificationService.ShowError(loadErrorMessage);
         }
     }
 

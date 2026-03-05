@@ -50,7 +50,7 @@ public class AuthService
         var response = await _httpClient.PostAsJsonAsync("api/auth/register", new RegisterRequest(email, password));
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException(await BuildErrorMessageAsync(response, "register"));
+            throw new HttpRequestException(await ApiResponseErrorBuilder.BuildAsync(response, "register"));
         }
     }
 
@@ -59,7 +59,7 @@ public class AuthService
         var response = await _httpClient.PostAsJsonAsync("api/auth/login", new LoginRequest(email, password));
         if (!response.IsSuccessStatusCode)
         {
-            throw new HttpRequestException(await BuildErrorMessageAsync(response, "log in"));
+            throw new HttpRequestException(await ApiResponseErrorBuilder.BuildAsync(response, "log in"));
         }
 
         var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
@@ -105,17 +105,6 @@ public class AuthService
         _userSession.SetUserContextFromJwt(token);
 
         AuthStateChanged?.Invoke();
-    }
-
-    private static async Task<string> BuildErrorMessageAsync(HttpResponseMessage response, string operation)
-    {
-        var responseBody = await response.Content.ReadAsStringAsync();
-        if (string.IsNullOrWhiteSpace(responseBody))
-        {
-            return $"Unable to {operation}. Server returned {(int)response.StatusCode} ({response.ReasonPhrase}).";
-        }
-
-        return $"Unable to {operation}. Server returned {(int)response.StatusCode} ({response.ReasonPhrase}): {responseBody}";
     }
 
     private sealed record RegisterRequest(string Email, string Password);

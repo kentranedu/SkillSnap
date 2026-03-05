@@ -4,14 +4,14 @@
 @inject NotificationService NotificationService
 
 <section>
-    <h3>Skills</h3>
+    <h3>Project Tags</h3>
 
     <ErrorBanner Message="@errorMessage" />
 
-    <div class="skill-tags">
+    <div class="project-tags">
         @foreach (var project in projects)
         {
-            <span class="skill-tag">@project.Title</span>
+            <span class="project-tag">@project.Title</span>
         }
     </div>
 </section>
@@ -36,13 +36,13 @@
 }
 
 <style>
-    .skill-tags {
+    .project-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
     }
 
-    .skill-tag {
+    .project-tag {
         padding: 0.35rem 0.65rem;
         border-radius: 999px;
         background-color: #e0f2fe;

@@ -13,7 +13,6 @@ builder.Services.AddScoped(_ =>
 		BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 	});
 builder.Services.AddScoped<ProjectService>();
-builder.Services.AddScoped<SkillService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserSessionService>();
