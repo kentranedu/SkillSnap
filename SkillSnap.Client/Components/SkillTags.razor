@@ -1,9 +1,12 @@
 @using SkillSnap.Client.Models
 @using SkillSnap.Client.Services
 @inject ProjectService ProjectService
+@inject NotificationService NotificationService
 
 <section>
     <h3>Skills</h3>
+
+    <ErrorBanner Message="@errorMessage" />
 
     <div class="skill-tags">
         @foreach (var project in projects)
@@ -15,10 +18,20 @@
 
 @code {
     private List<Project> projects = new();
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        projects = await ProjectService.GetProjectsAsync();
+        try
+        {
+            errorMessage = null;
+            projects = await ProjectService.GetProjectsAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = ex.Message;
+            NotificationService.ShowError(errorMessage);
+        }
     }
 }
 

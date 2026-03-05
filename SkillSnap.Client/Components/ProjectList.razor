@@ -2,9 +2,13 @@
 @using SkillSnap.Client.Services
 @using System.ComponentModel.DataAnnotations
 @inject ProjectService ProjectService
+@inject NotificationService NotificationService
 
 <section>
     <h3>Projects</h3>
+
+    <ErrorBanner Message="@loadErrorMessage" />
+    <ErrorBanner Message="@submitErrorMessage" />
 
     <EditForm Model="newProjectForm" OnValidSubmit="HandleValidSubmit">
         <DataAnnotationsValidator />
@@ -28,7 +32,7 @@
             <ValidationMessage For="() => newProjectForm.ImageUrl" />
         </div>
 
-        <button type="submit">Add Project</button>
+        <button type="submit" disabled="@isSubmitting">Add Project</button>
     </EditForm>
 
     @foreach (var project in projects)
@@ -43,27 +47,55 @@
 @code {
     private List<Project> projects = new();
     private ProjectFormModel newProjectForm = new();
+    private string? loadErrorMessage;
+    private string? submitErrorMessage;
+    private bool isSubmitting;
 
     protected override async Task OnInitializedAsync()
     {
-        projects = await ProjectService.GetProjectsAsync();
+        try
+        {
+            loadErrorMessage = null;
+            projects = await ProjectService.GetProjectsAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            loadErrorMessage = ex.Message;
+            NotificationService.ShowError(loadErrorMessage);
+        }
     }
 
     private async Task HandleValidSubmit()
     {
-        var newProject = new Project
-        {
-            Title = newProjectForm.Title,
-            Description = newProjectForm.Description,
-            ImageUrl = newProjectForm.ImageUrl,
-            PortfolioUserId = 1
-        };
+        isSubmitting = true;
+        submitErrorMessage = null;
 
-        var createdProject = await ProjectService.AddProjectAsync(newProject);
-        if (createdProject is not null)
+        try
         {
-            projects.Add(createdProject);
-            newProjectForm = new ProjectFormModel();
+            var newProject = new Project
+            {
+                Title = newProjectForm.Title,
+                Description = newProjectForm.Description,
+                ImageUrl = newProjectForm.ImageUrl,
+                PortfolioUserId = 1
+            };
+
+            var createdProject = await ProjectService.AddProjectAsync(newProject);
+            if (createdProject is not null)
+            {
+                projects.Add(createdProject);
+                newProjectForm = new ProjectFormModel();
+                NotificationService.ShowSuccess("Project added successfully.");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            submitErrorMessage = ex.Message;
+            NotificationService.ShowError(submitErrorMessage);
+        }
+        finally
+        {
+            isSubmitting = false;
         }
     }
 
@@ -107,4 +139,5 @@
         margin-bottom: 0.75rem;
         background-color: #ffffff;
     }
+
 </style>

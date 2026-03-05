@@ -1,6 +1,7 @@
 @using SkillSnap.Client.Models
 @using SkillSnap.Client.Services
 @inject ProjectService ProjectService
+@inject NotificationService NotificationService
 
 <section class="api-item-list">
     <h3>Items From API</h3>
@@ -11,7 +12,7 @@
     }
     else if (!string.IsNullOrWhiteSpace(errorMessage))
     {
-        <p class="error">@errorMessage</p>
+        <ErrorBanner Message="@errorMessage" />
     }
     else if (items.Count == 0)
     {
@@ -42,9 +43,10 @@
         {
             items = await ProjectService.GetProjectsAsync();
         }
-        catch (Exception ex)
+        catch (HttpRequestException ex)
         {
-            errorMessage = $"Unable to load items: {ex.Message}";
+            errorMessage = ex.Message;
+            NotificationService.ShowError(errorMessage);
         }
         finally
         {
@@ -60,9 +62,5 @@
 
     .api-item-list li {
         margin-bottom: 0.75rem;
-    }
-
-    .error {
-        color: #b91c1c;
     }
 </style>

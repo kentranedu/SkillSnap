@@ -14,5 +14,6 @@ builder.Services.AddScoped(_ =>
 	});
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<SkillService>();
+builder.Services.AddScoped<NotificationService>();
 
 await builder.Build().RunAsync();
