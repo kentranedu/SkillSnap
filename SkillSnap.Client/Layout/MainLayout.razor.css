@@ -2,6 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
@@ -9,40 +10,65 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(180deg, #1d3b53 0%, #2f5d62 60%, #709775 100%);
 }
 
 .top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
+    background-color: #fffdf8;
+    border-bottom: 1px solid #d9d8d2;
+    justify-content: space-between;
+    min-height: 4.5rem;
     display: flex;
     align-items: center;
+    gap: 1rem;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
+    .top-row ::deep a,
+    .top-row ::deep .btn-link {
         white-space: nowrap;
-        margin-left: 1.5rem;
+        margin-left: 0;
         text-decoration: none;
+        font-weight: 500;
+        color: #0f766e;
     }
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+    .top-row ::deep a:hover,
+    .top-row ::deep .btn-link:hover {
         text-decoration: underline;
     }
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.top-brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.top-kicker {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6f7a84;
+}
+
+.top-title {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: #1d3b53;
+}
 
 @media (max-width: 640.98px) {
     .top-row {
-        justify-content: space-between;
+        min-height: 4rem;
+        padding-top: 0.45rem;
+        padding-bottom: 0.45rem;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
+    .top-kicker {
+        font-size: 0.68rem;
+    }
+
+    .top-title {
+        font-size: 0.98rem;
     }
 }
 
@@ -64,13 +90,8 @@ main {
         z-index: 1;
     }
 
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
-
-    .top-row, article {
+    .top-row,
+    article {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }

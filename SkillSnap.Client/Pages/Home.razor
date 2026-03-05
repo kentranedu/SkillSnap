@@ -3,24 +3,93 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="hero card-shell">
+	<p class="hero-kicker">Build, review, and share</p>
+	<h1>SkillSnap Portfolio Board</h1>
+	<p class="hero-summary">Track projects, keep your profile clear, and preview content in a readable responsive layout.</p>
+</section>
 
-Welcome to your new app.
+<section class="session-grid">
+	<article class="session-card card-shell">
+		<h3>Session Details</h3>
 
-@if (!string.IsNullOrWhiteSpace(UserSession.UserId))
-{
-	<p><strong>UserId:</strong> @UserSession.UserId</p>
-}
+		@if (!string.IsNullOrWhiteSpace(UserSession.UserId))
+		{
+			<p><strong>UserId:</strong> @UserSession.UserId</p>
+		}
 
-@if (!string.IsNullOrWhiteSpace(UserSession.Role))
-{
-	<p><strong>Role:</strong> @UserSession.Role</p>
-}
+		@if (!string.IsNullOrWhiteSpace(UserSession.Role))
+		{
+			<p><strong>Role:</strong> @UserSession.Role</p>
+		}
 
-@if (!string.IsNullOrWhiteSpace(UserSession.CurrentEditingProjectTitle))
-{
-	<p>
-		<strong>Current Project Draft:</strong>
-		@UserSession.CurrentEditingProjectTitle
-	</p>
-}
+		@if (!string.IsNullOrWhiteSpace(UserSession.CurrentEditingProjectTitle))
+		{
+			<p>
+				<strong>Current Project Draft:</strong>
+				@UserSession.CurrentEditingProjectTitle
+			</p>
+		}
+	</article>
+
+	<article class="session-card card-shell">
+		<ProjectTags />
+	</article>
+</section>
+
+<section class="content-grid">
+	<article class="grid-card card-shell">
+		<ProjectList />
+	</article>
+
+	<article class="grid-card card-shell">
+		<ApiItemList />
+	</article>
+</section>
+
+<style>
+	.hero {
+		padding: 1.25rem 1.4rem;
+		margin-bottom: 1rem;
+	}
+
+	.hero-kicker {
+		margin: 0;
+		font-size: 0.78rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: #6f7a84;
+	}
+
+	.hero-summary {
+		margin: 0.5rem 0 0;
+		color: #4d5964;
+		font-size: 0.98rem;
+	}
+
+	.session-grid,
+	.content-grid {
+		display: grid;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	.session-grid {
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	}
+
+	.content-grid {
+		grid-template-columns: minmax(280px, 1.6fr) minmax(220px, 1fr);
+	}
+
+	.session-card,
+	.grid-card {
+		padding: 1rem;
+	}
+
+	@@media (max-width: 900px) {
+		.content-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

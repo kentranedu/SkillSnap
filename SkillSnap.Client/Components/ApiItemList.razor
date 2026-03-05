@@ -5,6 +5,7 @@
 
 <section class="api-item-list">
     <h3>Items From API</h3>
+    <p class="api-subtitle">Quick read-only snapshot from `/api/projects`.</p>
 
     @if (isLoading)
     {
@@ -16,7 +17,17 @@
     }
     else if (items.Count == 0)
     {
-        <p>No items found.</p>
+        <p class="sample-note">No items found. Displaying sample entries.</p>
+        <ul>
+            <li>
+                <strong>Sample: Learning Journal</strong><br />
+                <span>A weekly digest of feature work and lessons learned.</span>
+            </li>
+            <li>
+                <strong>Sample: Team Pulse Board</strong><br />
+                <span>Tracks sprint highlights, blockers, and confidence trends.</span>
+            </li>
+        </ul>
     }
     else
     {
@@ -56,11 +67,30 @@
 }
 
 <style>
+    .api-subtitle {
+        color: #4d5964;
+        margin-bottom: 0.85rem;
+        font-size: 0.92rem;
+    }
+
+    .sample-note {
+        margin-bottom: 0.45rem;
+        font-size: 0.9rem;
+        color: #6f7a84;
+    }
+
     .api-item-list ul {
         padding-left: 1rem;
+        margin: 0;
     }
 
     .api-item-list li {
         margin-bottom: 0.75rem;
+        color: #36434d;
+        font-size: 0.95rem;
+    }
+
+    .api-item-list li span {
+        color: #56636f;
     }
 </style>

@@ -1,12 +1,49 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+:root {
+    --bg-canvas: #f3efe5;
+    --bg-surface: #fffdf8;
+    --ink-strong: #1f2a33;
+    --ink-soft: #4d5964;
+    --accent-main: #0f766e;
+    --accent-warm: #b45309;
+    --line-subtle: #d9d8d2;
+}
+
+html,
+body {
+    font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top right, #e5edf2 0%, rgba(229, 237, 242, 0) 42%), var(--bg-canvas);
+    color: var(--ink-strong);
+}
+
+body {
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: 'Literata', Georgia, serif;
+    color: #172027;
+    letter-spacing: 0.01em;
+}
+
+h1 {
+    font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.8rem);
+}
+
+h3 {
+    font-size: clamp(1.2rem, 1.05rem + 0.9vw, 1.7rem);
 }
 
 h1:focus {
     outline: none;
 }
 
-a, .btn-link {
+a,
+.btn-link {
     color: #0071c1;
 }
 
@@ -21,7 +58,9 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 1.1rem;
+    padding-top: 1.4rem;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -103,6 +142,19 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+
+.card-shell {
+    background: var(--bg-surface);
+    border: 1px solid var(--line-subtle);
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(23, 32, 39, 0.06);
+}
+
+@media (max-width: 900px) {
+    .content {
+        padding-top: 1rem;
+    }
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {

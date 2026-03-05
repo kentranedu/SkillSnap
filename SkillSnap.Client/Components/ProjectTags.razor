@@ -5,15 +5,27 @@
 
 <section>
     <h3>Project Tags</h3>
+    <p class="tags-subtitle">At-a-glance labels from your project catalog.</p>
 
     <ErrorBanner Message="@errorMessage" />
 
-    <div class="project-tags">
-        @foreach (var project in projects)
-        {
-            <span class="project-tag">@project.Title</span>
-        }
-    </div>
+    @if (projects.Count == 0)
+    {
+        <div class="project-tags">
+            <span class="project-tag sample-tag">Sample: API Cache Monitor</span>
+            <span class="project-tag sample-tag">Sample: Hiring Tracker</span>
+            <span class="project-tag sample-tag">Sample: Team Dashboard</span>
+        </div>
+    }
+    else
+    {
+        <div class="project-tags">
+            @foreach (var project in projects)
+            {
+                <span class="project-tag">@project.Title</span>
+            }
+        </div>
+    }
 </section>
 
 @code {
@@ -36,6 +48,12 @@
 }
 
 <style>
+    .tags-subtitle {
+        margin: 0 0 0.75rem;
+        color: #4d5964;
+        font-size: 0.92rem;
+    }
+
     .project-tags {
         display: flex;
         flex-wrap: wrap;
@@ -47,6 +65,13 @@
         border-radius: 999px;
         background-color: #e0f2fe;
         border: 1px solid #bae6fd;
-        font-size: 0.9rem;
+        font-size: 0.86rem;
+        font-weight: 500;
+    }
+
+    .sample-tag {
+        background-color: #f3f5f7;
+        border-color: #d7dde2;
+        color: #5b6976;
     }
 </style>

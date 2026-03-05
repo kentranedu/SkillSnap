@@ -7,41 +7,63 @@
 
 <section>
     <h3>Projects</h3>
+    <p class="section-summary">Capture your recent work and preview each project with a readable card.</p>
 
     <ErrorBanner Message="@loadErrorMessage" />
     <ErrorBanner Message="@submitErrorMessage" />
 
-    <EditForm Model="newProjectForm" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="newProjectForm" OnValidSubmit="HandleValidSubmit" class="project-form">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="field">
             <label>Title</label>
-            <InputText @bind-Value="newProjectForm.Title" />
+            <InputText @bind-Value="newProjectForm.Title" placeholder="Example: Blazor Portfolio Dashboard" />
             <ValidationMessage For="() => newProjectForm.Title" />
         </div>
 
         <div class="field">
             <label>Description</label>
-            <InputText @bind-Value="newProjectForm.Description" />
+            <InputText @bind-Value="newProjectForm.Description" placeholder="One-line purpose of the project" />
             <ValidationMessage For="() => newProjectForm.Description" />
         </div>
 
         <div class="field">
             <label>Image URL</label>
-            <InputText @bind-Value="newProjectForm.ImageUrl" />
+            <InputText @bind-Value="newProjectForm.ImageUrl" placeholder="Leave blank to use placeholder preview" />
             <ValidationMessage For="() => newProjectForm.ImageUrl" />
         </div>
 
-        <button type="submit" disabled="@isSubmitting">Add Project</button>
+        <button class="btn-submit" type="submit" disabled="@isSubmitting">Add Project</button>
     </EditForm>
 
-    @foreach (var project in projects)
+    @if (projects.Count == 0)
     {
-        <article class="project-item">
-            <h4>@project.Title</h4>
-            <p>@project.Description</p>
-        </article>
+        <p class="sample-note">No project data yet. Showing sample cards for readability.</p>
+
+        @foreach (var sampleProject in SampleProjects)
+        {
+            <article class="project-item">
+                <img class="project-thumb" src="/images/project-placeholder.svg" alt="Sample preview" loading="lazy" />
+                <div>
+                    <h4>@sampleProject.Title</h4>
+                    <p>@sampleProject.Description</p>
+                </div>
+            </article>
+        }
+    }
+    else
+    {
+        @foreach (var project in projects)
+        {
+            <article class="project-item">
+                <img class="project-thumb" src="@GetProjectImageUrl(project)" alt="@($"{project.Title} preview")" loading="lazy" />
+                <div>
+                    <h4>@project.Title</h4>
+                    <p>@project.Description</p>
+                </div>
+            </article>
+        }
     }
 </section>
 
@@ -51,6 +73,25 @@
     private string? loadErrorMessage;
     private string? submitErrorMessage;
     private bool isSubmitting;
+    private static readonly IReadOnlyList<Project> SampleProjects =
+    [
+        new Project
+        {
+            Id = -1,
+            Title = "Interview Prep Tracker",
+            Description = "A lightweight board for tracking mock interviews and follow-up goals.",
+            ImageUrl = string.Empty,
+            PortfolioUserId = 0
+        },
+        new Project
+        {
+            Id = -2,
+            Title = "API Performance Snapshot",
+            Description = "A dashboard that visualizes endpoint latency and cache status for daily checks.",
+            ImageUrl = string.Empty,
+            PortfolioUserId = 0
+        }
+    ];
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,6 +159,17 @@
         }
     }
 
+    private static string GetProjectImageUrl(Project project)
+    {
+        if (Uri.TryCreate(project.ImageUrl, UriKind.Absolute, out var imageUri)
+            && (imageUri.Scheme == Uri.UriSchemeHttp || imageUri.Scheme == Uri.UriSchemeHttps))
+        {
+            return project.ImageUrl;
+        }
+
+        return "/images/project-placeholder.svg";
+    }
+
     private class ProjectFormModel
     {
         [Required]
@@ -128,35 +180,104 @@
         [StringLength(300)]
         public string Description { get; set; } = string.Empty;
 
-        [Required]
         [Url]
         public string ImageUrl { get; set; } = string.Empty;
     }
 }
 
 <style>
+    .section-summary {
+        color: #4d5964;
+        margin-bottom: 1rem;
+        font-size: 0.96rem;
+    }
+
+    .project-form {
+        padding: 0.9rem;
+        border: 1px solid #d9d8d2;
+        border-radius: 14px;
+        background: #fffefb;
+        margin-bottom: 1rem;
+    }
+
     .field {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.8rem;
     }
 
     .field label {
         display: block;
         font-weight: 600;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.92rem;
     }
 
     .field input {
         width: 100%;
-        max-width: 420px;
-        padding: 0.45rem;
+        max-width: 620px;
+        padding: 0.52rem 0.58rem;
+        border: 1px solid #cfd5d8;
+        border-radius: 10px;
+        font-size: 0.96rem;
+    }
+
+    .btn-submit {
+        border: 0;
+        border-radius: 999px;
+        background: #1d3b53;
+        color: #fff;
+        padding: 0.52rem 1rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.65;
+    }
+
+    .sample-note {
+        margin: 0 0 0.6rem;
+        color: #6f7a84;
+        font-size: 0.9rem;
     }
 
     .project-item {
-        padding: 0.75rem;
+        padding: 0.8rem;
         border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
+        border-radius: 0.8rem;
         margin-bottom: 0.75rem;
         background-color: #ffffff;
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        gap: 0.75rem;
+        align-items: start;
     }
 
+    .project-thumb {
+        width: 100%;
+        height: 84px;
+        object-fit: cover;
+        border-radius: 0.55rem;
+        border: 1px solid #dce2e6;
+    }
+
+    .project-item h4 {
+        margin: 0 0 0.25rem;
+        font-size: 1.02rem;
+    }
+
+    .project-item p {
+        margin: 0;
+        color: #4d5964;
+        font-size: 0.93rem;
+    }
+
+    @@media (max-width: 700px) {
+        .project-item {
+            grid-template-columns: 1fr;
+        }
+
+        .project-thumb {
+            height: 140px;
+        }
+    }
 </style>
