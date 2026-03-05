@@ -1,6 +1,7 @@
 # Ignore compiled build output folders
 **/bin/
 **/obj/
+_buildcheck/
 
 # Visual Studio and user-specific files
 .vs/
