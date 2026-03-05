@@ -1,0 +1,77 @@
+SkillSnap Capstone Project Documentation
+Date: 2026-03-05
+
+1) Project Summary
+SkillSnap is a full-stack portfolio management app built with ASP.NET Core (API) and Blazor WebAssembly (client).
+It lets users register/login with JWT authentication and manage portfolio project data through API-backed UI components.
+The client presents project cards, tags, and API-fed lists with responsive layout improvements for desktop and mobile.
+
+2) Key Features
+
+A) CRUD Features
+- Projects API supports:
+  - Create: POST /api/projects (authenticated)
+  - Read list: GET /api/projects (cached)
+  - Read by id: GET /api/projects/{id}
+  - Update: PUT /api/projects/{id} (authenticated)
+  - Delete: DELETE /api/projects/{id} (authenticated)
+- Skills API currently supports:
+  - Read list: GET /api/skills
+  - Create: POST /api/skills (Admin role only)
+
+B) Security Features
+- JWT-based authentication with login/register endpoints.
+- Token validation enabled for issuer, audience, lifetime, and signing key.
+- Protected project write endpoints using [Authorize].
+- Role-based protection for skill creation using [Authorize(Roles = "Admin")].
+- Client auth state stored in localStorage and attached as Bearer token to API requests.
+
+C) Caching Features
+- Projects list endpoint uses IMemoryCache with:
+  - Fresh cache key (shorter TTL)
+  - Fallback cache key (longer TTL)
+- GET /api/projects returns X-Cache response header values: HIT, MISS, FALLBACK.
+- After project create/update/delete, cache is invalidated and refreshed from DB to avoid stale reads.
+- API logs include cache lifecycle events (invalidate/refresh) for verification.
+
+D) Client State Features
+- UserSessionService stores lightweight user context from JWT (user id, role, draft metadata).
+- ProjectList keeps editing draft state and reloads API data after successful create.
+- Home page composes reusable components (ProjectList, ProjectTags, ApiItemList) in a responsive grid.
+
+3) Development Process and Use of Copilot
+- Development followed an iterative workflow:
+  1. Inspect existing API/client structure and auth configuration.
+  2. Run live endpoint validation for auth, authorization, and CRUD behavior.
+  3. Implement missing project CRUD endpoints and secure writes.
+  4. Add cache refresh logic and log signals to verify data freshness.
+  5. Refactor duplicate client service code into shared helper methods.
+  6. Clean up unused code/services and improve naming consistency.
+  7. Refresh UI spacing, typography, and responsive behavior.
+  8. Rebuild and smoke-test after each major change.
+- Copilot was used to:
+  - Analyze controllers/services for security and logic gaps.
+  - Generate and apply focused code patches.
+  - Propose and implement refactors (helper extraction, naming cleanup).
+  - Run command-line validation (build, runtime checks, endpoint tests).
+  - Provide structured summaries of findings and implementation status.
+
+4) Known Issues and Future Improvements
+
+Known Issues
+- Seed endpoint is currently mutable and should be restricted (auth/dev-only) before production use.
+- Skills API does not yet include update/delete endpoints.
+- Newly registered users are not automatically assigned Admin role, so skill creation is typically forbidden for them.
+- JWT signing key in appsettings files is placeholder text and should be replaced with secure secret management.
+
+Future Improvements
+- Add full Skills CRUD (with clear ownership/role authorization policies).
+- Apply secure-by-default authorization policy (fallback policy requiring auth, explicit [AllowAnonymous] where needed).
+- Add lockout/rate-limiting protections for login to reduce brute-force risk.
+- Add automated tests:
+  - API integration tests for auth and CRUD authorization
+  - Cache behavior tests for freshness after writes
+  - UI component tests for empty/loading/error states
+- Add user-facing profile and skill management pages.
+- Add pagination/filter/sort for larger project lists.
+- Add production-grade observability (structured logs, tracing, health checks).
