@@ -1,0 +1,68 @@
+@using SkillSnap.Client.Models
+@using SkillSnap.Client.Services
+@inject ProjectService ProjectService
+
+<section class="api-item-list">
+    <h3>Items From API</h3>
+
+    @if (isLoading)
+    {
+        <p>Loading items...</p>
+    }
+    else if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <p class="error">@errorMessage</p>
+    }
+    else if (items.Count == 0)
+    {
+        <p>No items found.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var item in items)
+            {
+                <li>
+                    <strong>@item.Title</strong><br />
+                    <span>@item.Description</span>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+@code {
+    private List<Project> items = new();
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            items = await ProjectService.GetProjectsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unable to load items: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
+
+<style>
+    .api-item-list ul {
+        padding-left: 1rem;
+    }
+
+    .api-item-list li {
+        margin-bottom: 0.75rem;
+    }
+
+    .error {
+        color: #b91c1c;
+    }
+</style>
