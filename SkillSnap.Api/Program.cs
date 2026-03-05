@@ -3,13 +3,14 @@ using SkillSnap.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Service registrations
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Data Source=skillsnap.db";
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
 builder.Services.AddDbContext<SkillSnapContext>(options =>
-    options.UseSqlite("Data Source=skillsnap.db"));
+    options.UseSqlite(connectionString));
 
 var app = builder.Build();
 
