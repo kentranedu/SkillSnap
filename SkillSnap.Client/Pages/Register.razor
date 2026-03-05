@@ -1,0 +1,86 @@
+@page "/register"
+@inject SkillSnap.Client.Services.AuthService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Register</PageTitle>
+
+<h1>Register</h1>
+
+<EditForm Model="_model" OnValidSubmit="HandleRegisterAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="_model.Email" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="password">Password</label>
+        <InputText id="password" type="password" class="form-control" @bind-Value="_model.Password" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="confirmPassword">Confirm password</label>
+        <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="_model.ConfirmPassword" />
+    </div>
+
+    <button class="btn btn-primary" type="submit" disabled="@_isSubmitting">@(_isSubmitting ? "Creating account..." : "Register")</button>
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(_message))
+{
+    <p class="@(_isSuccess ? "text-success" : "text-danger") mt-3">@_message</p>
+}
+
+@code {
+    private readonly RegisterModel _model = new();
+    private bool _isSubmitting;
+    private bool _isSuccess;
+    private string? _message;
+
+    private async Task HandleRegisterAsync()
+    {
+        _isSubmitting = true;
+        _isSuccess = false;
+        _message = null;
+
+        try
+        {
+            if (!string.Equals(_model.Password, _model.ConfirmPassword, StringComparison.Ordinal))
+            {
+                _message = "Passwords do not match.";
+                return;
+            }
+
+            await AuthService.RegisterAsync(_model.Email, _model.Password);
+            _isSuccess = true;
+            _message = "Registration successful. Redirecting to login...";
+
+            await Task.Delay(1000);
+            Navigation.NavigateTo("/login");
+        }
+        catch (HttpRequestException ex)
+        {
+            _message = ex.Message;
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private sealed class RegisterModel
+    {
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}

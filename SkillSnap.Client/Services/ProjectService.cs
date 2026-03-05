@@ -6,16 +6,19 @@ namespace SkillSnap.Client.Services;
 public class ProjectService
 {
     private readonly HttpClient _httpClient;
+    private readonly AuthService _authService;
 
-    public ProjectService(HttpClient httpClient)
+    public ProjectService(HttpClient httpClient, AuthService authService)
     {
         _httpClient = httpClient;
+        _authService = authService;
     }
 
     public async Task<List<Project>> GetProjectsAsync()
     {
         try
         {
+            await _authService.EnsureAuthHeaderAsync();
             var response = await _httpClient.GetAsync("api/projects");
             if (!response.IsSuccessStatusCode)
             {
@@ -43,6 +46,7 @@ public class ProjectService
     {
         try
         {
+            await _authService.EnsureAuthHeaderAsync();
             var response = await _httpClient.PostAsJsonAsync("api/projects", newProject);
             if (!response.IsSuccessStatusCode)
             {
