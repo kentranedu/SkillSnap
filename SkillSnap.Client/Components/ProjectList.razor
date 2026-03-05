@@ -1,7 +1,11 @@
+@using SkillSnap.Client.Models
+@using SkillSnap.Client.Services
+@inject ProjectService ProjectService
+
 <section>
     <h3>Projects</h3>
 
-    @foreach (var project in DummyProjects)
+    @foreach (var project in projects)
     {
         <article class="project-item">
             <h4>@project.Title</h4>
@@ -11,18 +15,11 @@
 </section>
 
 @code {
-    private readonly List<ProjectItem> DummyProjects =
-    [
-        new() { Title = "Task Tracker", Description = "A simple app to manage daily tasks and deadlines." },
-        new() { Title = "Weather App", Description = "Fetches weather forecasts from a public API." },
-        new() { Title = "Portfolio Site", Description = "Personal site to showcase projects and skills." }
-    ];
+    private List<Project> projects = new();
 
-    private class ProjectItem
+    protected override async Task OnInitializedAsync()
     {
-        public string Title { get; set; } = string.Empty;
-
-        public string Description { get; set; } = string.Empty;
+        projects = await ProjectService.GetProjectsAsync();
     }
 }
 

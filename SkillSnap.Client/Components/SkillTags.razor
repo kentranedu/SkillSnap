@@ -1,23 +1,25 @@
+@using SkillSnap.Client.Models
+@using SkillSnap.Client.Services
+@inject ProjectService ProjectService
+
 <section>
     <h3>Skills</h3>
 
     <div class="skill-tags">
-        @foreach (var skill in DummySkills)
+        @foreach (var project in projects)
         {
-            <span class="skill-tag">@skill</span>
+            <span class="skill-tag">@project.Title</span>
         }
     </div>
 </section>
 
 @code {
-    private readonly List<string> DummySkills =
-    [
-        "C#",
-        "ASP.NET Core",
-        "Blazor",
-        "Entity Framework Core",
-        "SQL"
-    ];
+    private List<Project> projects = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        projects = await ProjectService.GetProjectsAsync();
+    }
 }
 
 <style>
