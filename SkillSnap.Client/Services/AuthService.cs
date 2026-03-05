@@ -10,13 +10,15 @@ public class AuthService
 
     private readonly HttpClient _httpClient;
     private readonly IJSRuntime _jsRuntime;
+    private readonly UserSessionService _userSession;
 
     private bool _isInitialized;
 
-    public AuthService(HttpClient httpClient, IJSRuntime jsRuntime)
+    public AuthService(HttpClient httpClient, IJSRuntime jsRuntime, UserSessionService userSession)
     {
         _httpClient = httpClient;
         _jsRuntime = jsRuntime;
+        _userSession = userSession;
     }
 
     public event Action? AuthStateChanged;
@@ -77,6 +79,7 @@ public class AuthService
         Token = null;
         IsAuthenticated = false;
         _httpClient.DefaultRequestHeaders.Authorization = null;
+        _userSession.ClearAll();
 
         AuthStateChanged?.Invoke();
     }
@@ -99,6 +102,7 @@ public class AuthService
         Token = token;
         IsAuthenticated = true;
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _userSession.SetUserContextFromJwt(token);
 
         AuthStateChanged?.Invoke();
     }

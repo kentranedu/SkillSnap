@@ -1,7 +1,26 @@
 ﻿@page "/"
+@inject SkillSnap.Client.Services.UserSessionService UserSession
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@if (!string.IsNullOrWhiteSpace(UserSession.UserId))
+{
+	<p><strong>UserId:</strong> @UserSession.UserId</p>
+}
+
+@if (!string.IsNullOrWhiteSpace(UserSession.Role))
+{
+	<p><strong>Role:</strong> @UserSession.Role</p>
+}
+
+@if (!string.IsNullOrWhiteSpace(UserSession.CurrentEditingProjectTitle))
+{
+	<p>
+		<strong>Current Project Draft:</strong>
+		@UserSession.CurrentEditingProjectTitle
+	</p>
+}

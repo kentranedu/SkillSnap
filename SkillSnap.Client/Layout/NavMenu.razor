@@ -1,4 +1,5 @@
 ﻿@inject SkillSnap.Client.Services.AuthService AuthService
+@inject SkillSnap.Client.Services.UserSessionService UserSession
 @inject NavigationManager Navigation
 @implements IDisposable
 
@@ -43,6 +44,13 @@
         }
         else
         {
+            @if (!string.IsNullOrWhiteSpace(UserSession.Role))
+            {
+                <div class="nav-item px-3 text-light small">
+                    Role: @UserSession.Role
+                </div>
+            }
+
             <div class="nav-item px-3">
                 <button type="button" class="btn btn-link nav-link p-0" @onclick="HandleLogoutAsync">
                     Logout
@@ -60,11 +68,13 @@
     protected override void OnInitialized()
     {
         AuthService.AuthStateChanged += OnAuthStateChanged;
+        UserSession.SessionChanged += OnAuthStateChanged;
     }
 
     public void Dispose()
     {
         AuthService.AuthStateChanged -= OnAuthStateChanged;
+        UserSession.SessionChanged -= OnAuthStateChanged;
     }
 
     private void ToggleNavMenu()

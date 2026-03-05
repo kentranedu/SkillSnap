@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @inject ProjectService ProjectService
 @inject NotificationService NotificationService
+@inject UserSessionService UserSession
 
 <section>
     <h3>Projects</h3>
@@ -57,6 +58,12 @@
         {
             loadErrorMessage = null;
             projects = await ProjectService.GetProjectsAsync();
+
+            if (UserSession.CurrentEditingProjectId.HasValue)
+            {
+                newProjectForm.Title = UserSession.CurrentEditingProjectTitle;
+                newProjectForm.Description = UserSession.CurrentEditingProjectDescription;
+            }
         }
         catch (HttpRequestException ex)
         {
@@ -72,6 +79,11 @@
 
         try
         {
+            UserSession.SetEditingProjectState(
+                projectId: null,
+                title: newProjectForm.Title,
+                description: newProjectForm.Description);
+
             var newProject = new Project
             {
                 Title = newProjectForm.Title,
@@ -85,6 +97,7 @@
             {
                 projects.Add(createdProject);
                 newProjectForm = new ProjectFormModel();
+                UserSession.SetEditingProjectState(createdProject.Id, createdProject.Title, createdProject.Description);
                 NotificationService.ShowSuccess("Project added successfully.");
             }
         }
