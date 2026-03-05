@@ -46,7 +46,10 @@ public class ProjectsController : ControllerBase
 
         try
         {
-            var freshProjects = await _context.Projects.AsNoTracking().ToListAsync();
+            var freshProjects = await _context.Projects
+                .Include(project => project.PortfolioUser)
+                .AsNoTracking()
+                .ToListAsync();
 
             _cache.Set(ProjectsCacheKey, freshProjects, ProjectsCacheOptions);
             _cache.Set(ProjectsFallbackCacheKey, freshProjects, ProjectsFallbackCacheOptions);

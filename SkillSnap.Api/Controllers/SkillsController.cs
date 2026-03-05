@@ -19,7 +19,11 @@ public class SkillsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Skill>>> GetSkills()
     {
-        var skills = await _context.Skills.ToListAsync();
+        var skills = await _context.Skills
+            .Include(skill => skill.PortfolioUser)
+            .AsNoTracking()
+            .ToListAsync();
+
         return Ok(skills);
     }
 
