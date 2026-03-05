@@ -1,9 +1,35 @@
 @using SkillSnap.Client.Models
 @using SkillSnap.Client.Services
+@using System.ComponentModel.DataAnnotations
 @inject ProjectService ProjectService
 
 <section>
     <h3>Projects</h3>
+
+    <EditForm Model="newProjectForm" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="field">
+            <label>Title</label>
+            <InputText @bind-Value="newProjectForm.Title" />
+            <ValidationMessage For="() => newProjectForm.Title" />
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <InputText @bind-Value="newProjectForm.Description" />
+            <ValidationMessage For="() => newProjectForm.Description" />
+        </div>
+
+        <div class="field">
+            <label>Image URL</label>
+            <InputText @bind-Value="newProjectForm.ImageUrl" />
+            <ValidationMessage For="() => newProjectForm.ImageUrl" />
+        </div>
+
+        <button type="submit">Add Project</button>
+    </EditForm>
 
     @foreach (var project in projects)
     {
@@ -16,14 +42,64 @@
 
 @code {
     private List<Project> projects = new();
+    private ProjectFormModel newProjectForm = new();
 
     protected override async Task OnInitializedAsync()
     {
         projects = await ProjectService.GetProjectsAsync();
     }
+
+    private async Task HandleValidSubmit()
+    {
+        var newProject = new Project
+        {
+            Title = newProjectForm.Title,
+            Description = newProjectForm.Description,
+            ImageUrl = newProjectForm.ImageUrl,
+            PortfolioUserId = 1
+        };
+
+        var createdProject = await ProjectService.AddProjectAsync(newProject);
+        if (createdProject is not null)
+        {
+            projects.Add(createdProject);
+            newProjectForm = new ProjectFormModel();
+        }
+    }
+
+    private class ProjectFormModel
+    {
+        [Required]
+        [StringLength(100)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(300)]
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
+        [Url]
+        public string ImageUrl { get; set; } = string.Empty;
+    }
 }
 
 <style>
+    .field {
+        margin-bottom: 0.75rem;
+    }
+
+    .field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .field input {
+        width: 100%;
+        max-width: 420px;
+        padding: 0.45rem;
+    }
+
     .project-item {
         padding: 0.75rem;
         border: 1px solid #e5e7eb;
