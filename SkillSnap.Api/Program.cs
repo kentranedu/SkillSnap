@@ -13,6 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
     ?? "Data Source=skillsnap.db";
 
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<SkillSnapContext>(options =>
     options.UseSqlite(connectionString));
