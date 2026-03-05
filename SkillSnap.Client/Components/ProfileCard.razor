@@ -1,11 +1,19 @@
 <article class="profile-card">
-    <img src="https://via.placeholder.com/160" alt="Profile picture placeholder" class="profile-image" />
-    <h2>Jordan Developer</h2>
-    <p>
-        Full-stack developer passionate about building practical apps,
-        learning new technologies, and improving developer workflows.
-    </p>
+    <img src="@ImageUrl" alt="@($"{Name} profile image")" class="profile-image" />
+    <h2>@Name</h2>
+    <p>@Bio</p>
 </article>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = "Jordan Developer";
+
+    [Parameter]
+    public string Bio { get; set; } = "Full-stack developer passionate about building practical apps, learning new technologies, and improving developer workflows.";
+
+    [Parameter]
+    public string ImageUrl { get; set; } = "https://via.placeholder.com/160";
+}
 
 <style>
     .profile-card {
