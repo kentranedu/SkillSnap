@@ -95,7 +95,7 @@
             var createdProject = await ProjectService.AddProjectAsync(newProject);
             if (createdProject is not null)
             {
-                projects.Add(createdProject);
+                projects = await ProjectService.GetProjectsAsync();
                 newProjectForm = new ProjectFormModel();
                 UserSession.SetEditingProjectState(createdProject.Id, createdProject.Title, createdProject.Description);
                 NotificationService.ShowSuccess("Project added successfully.");
