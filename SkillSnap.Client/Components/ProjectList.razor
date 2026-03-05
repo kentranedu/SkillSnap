@@ -1,0 +1,37 @@
+<section>
+    <h3>Projects</h3>
+
+    @foreach (var project in DummyProjects)
+    {
+        <article class="project-item">
+            <h4>@project.Title</h4>
+            <p>@project.Description</p>
+        </article>
+    }
+</section>
+
+@code {
+    private readonly List<ProjectItem> DummyProjects =
+    [
+        new() { Title = "Task Tracker", Description = "A simple app to manage daily tasks and deadlines." },
+        new() { Title = "Weather App", Description = "Fetches weather forecasts from a public API." },
+        new() { Title = "Portfolio Site", Description = "Personal site to showcase projects and skills." }
+    ];
+
+    private class ProjectItem
+    {
+        public string Title { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+    }
+}
+
+<style>
+    .project-item {
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+        background-color: #ffffff;
+    }
+</style>

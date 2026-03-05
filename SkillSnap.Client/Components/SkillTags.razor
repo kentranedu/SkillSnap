@@ -1,0 +1,37 @@
+<section>
+    <h3>Skills</h3>
+
+    <div class="skill-tags">
+        @foreach (var skill in DummySkills)
+        {
+            <span class="skill-tag">@skill</span>
+        }
+    </div>
+</section>
+
+@code {
+    private readonly List<string> DummySkills =
+    [
+        "C#",
+        "ASP.NET Core",
+        "Blazor",
+        "Entity Framework Core",
+        "SQL"
+    ];
+}
+
+<style>
+    .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .skill-tag {
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background-color: #e0f2fe;
+        border: 1px solid #bae6fd;
+        font-size: 0.9rem;
+    }
+</style>
