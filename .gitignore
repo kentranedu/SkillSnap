@@ -1,0 +1,15 @@
+# Ignore compiled build output folders
+**/bin/
+**/obj/
+
+# Visual Studio and user-specific files
+.vs/
+*.user
+*.suo
+
+# Test output
+TestResults/
+
+# Rider and VS Code workspace settings
+.idea/
+.vscode/
