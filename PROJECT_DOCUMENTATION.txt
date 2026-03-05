@@ -75,3 +75,42 @@ Future Improvements
 - Add user-facing profile and skill management pages.
 - Add pagination/filter/sort for larger project lists.
 - Add production-grade observability (structured logs, tracing, health checks).
+
+5) Technical Q&A
+
+Q1: Discuss development challenges.
+- One challenge was endpoint completeness drift: client components expected project mutation endpoints while the API initially exposed only project reads. This required adding missing CRUD endpoints and aligning route behavior/status codes.
+- Another challenge was balancing caching with data correctness. Read performance improved with IMemoryCache, but write operations initially risked stale responses unless cache invalidation/refresh was done immediately after CRUD operations.
+- Security review surfaced a practical challenge: protection was attribute-based per endpoint, which can lead to accidental public mutation routes if [Authorize] is missed.
+- UI challenges included improving readability and layout consistency across small and large screens while keeping existing component structure.
+
+Q2: How did you structure business logic, data persistence, and state management?
+- Business logic:
+  - API controllers handle request validation, authorization checks, and operation orchestration.
+  - Project cache lifecycle logic (hit/miss/fallback, invalidate/refresh) is centralized in ProjectsController helper methods.
+  - Client services (AuthService, ProjectService) encapsulate HTTP communication and error handling.
+- Data persistence:
+  - Entity Framework Core with SQLite is used via SkillSnapContext.
+  - Domain entities include PortfolioUser, Project, Skill, and Identity entities through ApplicationUser.
+  - Controllers perform async EF operations with AsNoTracking for read-heavy paths.
+- State management:
+  - Auth token is persisted in localStorage and applied to HttpClient authorization headers.
+  - UserSessionService stores lightweight user/session context (user id, role, draft metadata).
+  - UI components refresh server-backed state after mutations to avoid stale client-side projections.
+
+Q3: How did you implement security?
+- JWT authentication was configured in ASP.NET Core with issuer, audience, lifetime, and signing key validation.
+- Role/endpoint protection:
+  - Project write operations require authenticated users.
+  - Skill creation requires Admin role.
+- Client security integration:
+  - Token initialization and header propagation are handled centrally in AuthService.
+  - Login/register error responses are normalized for reliable UI handling.
+- Security validation was done through live endpoint tests for authorized and unauthorized scenarios.
+
+Q4: What performance improvements did you apply?
+- Added in-memory caching for project list reads with separate fresh/fallback cache keys and TTLs.
+- Returned cache telemetry in response headers (X-Cache) to verify hit/miss behavior quickly.
+- Implemented post-write cache invalidation and immediate rehydration from DB to maintain both speed and correctness.
+- Added API logging for cache events (HIT/MISS/FALLBACK plus INVALIDATE/REFRESH) to support performance diagnostics.
+- Used AsNoTracking on read paths to reduce EF Core tracking overhead for list retrieval endpoints.
